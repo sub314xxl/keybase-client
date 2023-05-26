@@ -6,14 +6,14 @@ import {Title, useAttachmentRedux, Collapsed, useCollapseIcon, Transferring} fro
 
 type Props = {
   toggleMessageMenu: () => void
-  isHighlighted?: boolean
 }
 
 const Video = React.memo(function Video(p: Props) {
-  const {isHighlighted, toggleMessageMenu} = p
-  const {fileName, isCollapsed, showTitle, openFullscreen, transferState, transferProgress} =
-    useAttachmentRedux()
-  const containerStyle = isHighlighted ? styles.containerHighlighted : styles.container
+  const {toggleMessageMenu} = p
+  const r = useAttachmentRedux()
+  const {transferState, transferProgress, submitState} = r
+  const {fileName, isCollapsed, showTitle, openFullscreen} = r
+  const containerStyle = styles.container
   const collapseIcon = useCollapseIcon(false)
 
   const filename = React.useMemo(() => {
@@ -39,14 +39,14 @@ const Video = React.memo(function Video(p: Props) {
           <VideoImpl
             openFullscreen={openFullscreen}
             toggleMessageMenu={toggleMessageMenu}
-            allowPlay={transferState !== 'uploading'}
+            allowPlay={transferState !== 'uploading' && submitState !== 'pending'}
           />
           {showTitle ? <Title /> : null}
           <Transferring transferState={transferState} ratio={transferProgress} />
         </Kb.Box2>
       </>
     )
-  }, [openFullscreen, toggleMessageMenu, showTitle, filename, transferProgress, transferState])
+  }, [openFullscreen, toggleMessageMenu, showTitle, filename, transferProgress, transferState, submitState])
 
   return (
     <Kb.Box2 direction="vertical" fullWidth={true} style={containerStyle} alignItems="flex-start">
@@ -59,11 +59,6 @@ const styles = Styles.styleSheetCreate(
   () =>
     ({
       container: {alignSelf: 'center', paddingRight: Styles.globalMargins.tiny, position: 'relative'},
-      containerHighlighted: {
-        alignSelf: 'center',
-        backgroundColor: Styles.globalColors.yellowLight,
-        paddingRight: Styles.globalMargins.tiny,
-      },
       contentContainer: {
         backgroundColor: Styles.globalColors.black_05_on_white,
         borderRadius: Styles.borderRadius,

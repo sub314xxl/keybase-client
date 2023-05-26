@@ -14,7 +14,7 @@ type Props = {
 }
 
 // this is a function of how much space is taken up by the rest of the elements
-export const maxWidth = Styles.isMobile ? Math.min(320, Styles.dimensionWidth - 60) : 320
+export const maxWidth = Styles.isMobile ? 301 : 320
 export const maxHeight = 320
 
 export const missingMessage = Constants.makeMessageAttachment()
@@ -64,10 +64,7 @@ export const Transferring = (p: {ratio: number; transferState: Types.MessageAtta
   )
 }
 
-export const getEditStyle = (isEditing: boolean, isHighlighted?: boolean) => {
-  if (isHighlighted) {
-    return Styles.collapseStyles([sharedStyles.sent, sharedStyles.highlighted])
-  }
+export const getEditStyle = (isEditing: boolean) => {
   return isEditing ? sharedStyles.sentEditing : sharedStyles.sent
 }
 
@@ -123,7 +120,10 @@ const CollapseIcon = ({isWhite}: {isWhite: boolean}) => {
 const styles = Styles.styleSheetCreate(() => ({
   collapseLabel: {backgroundColor: Styles.globalColors.fastBlank},
   collapseLabelWhite: {color: Styles.globalColors.white_75},
-  titleContainer: {paddingTop: Styles.globalMargins.xxtiny},
+  titleContainer: {
+    alignSelf: 'flex-start',
+    paddingTop: Styles.globalMargins.xxtiny,
+  },
   transferring: {
     backgroundColor: Styles.globalColors.black_50,
     borderRadius: 2,
@@ -141,7 +141,7 @@ const useCollapseAction = () => {
     (e: React.BaseSyntheticEvent) => {
       e.stopPropagation()
       const {conversationIDKey, ordinal} = getIds()
-      dispatch(Chat2Gen.createToggleMessageCollapse({conversationIDKey, messageID: ordinal}))
+      dispatch(Chat2Gen.createToggleMessageCollapse({conversationIDKey, messageID: ordinal, ordinal}))
     },
     [dispatch, getIds]
   )
@@ -177,19 +177,19 @@ export const useAttachmentRedux = () => {
     dispatch(Chat2Gen.createAttachmentPreviewSelect({conversationIDKey, ordinal}))
   }, [dispatch, getIds])
 
-  const {fileName, isCollapsed, isEditing, showTitle, transferProgress, transferState} =
+  const {fileName, isCollapsed, isEditing, showTitle, submitState, transferProgress, transferState} =
     Container.useSelector(state => {
       const m = Constants.getMessage(state, conversationIDKey, ordinal)
       const message = m?.type === 'attachment' ? m : missingMessage
       const {isCollapsed, title, fileName: fileNameRaw, transferProgress} = message
-      const {deviceType, inlineVideoPlayable, transferState} = message
+      const {deviceType, inlineVideoPlayable, transferState, submitState} = message
       const editInfo = Constants.getEditInfo(state, conversationIDKey)
       const isEditing = !!(editInfo && editInfo.ordinal === ordinal)
       const showTitle = !!title
       const fileName =
         deviceType === 'desktop' ? fileNameRaw : `${inlineVideoPlayable ? 'Video' : 'Image'} from mobile`
 
-      return {fileName, isCollapsed, isEditing, showTitle, transferProgress, transferState}
+      return {fileName, isCollapsed, isEditing, showTitle, submitState, transferProgress, transferState}
     }, shallowEqual)
 
   return {
@@ -198,6 +198,7 @@ export const useAttachmentRedux = () => {
     isEditing,
     openFullscreen,
     showTitle,
+    submitState,
     transferProgress,
     transferState,
   }

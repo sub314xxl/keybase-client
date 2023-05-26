@@ -14,14 +14,12 @@ import {isPathSaltpack} from '../../../../../constants/crypto'
 import shallowEqual from 'shallowequal'
 
 type OwnProps = {
-  isHighlighted?: boolean
   toggleMessageMenu: () => void
 }
 
 const missingMessage = Constants.makeMessageAttachment({})
 
 const FileContainer = React.memo(function FileContainer(p: OwnProps) {
-  const {isHighlighted} = p
   const conversationIDKey = React.useContext(ConvoIDContext)
   const ordinal = React.useContext(OrdinalContext)
   const isEditing = Container.useSelector(state => {
@@ -73,7 +71,7 @@ const FileContainer = React.memo(function FileContainer(p: OwnProps) {
             dispatch(
               Chat2Gen.createAttachmentDownload({
                 conversationIDKey: message.conversationIDKey,
-                ordinal: message.id,
+                ordinal: message.ordinal,
               })
             )
         }
@@ -97,7 +95,6 @@ const FileContainer = React.memo(function FileContainer(p: OwnProps) {
     fileName: fileName ?? '',
     hasProgress,
     isEditing,
-    isHighlighted,
     isSaltpackFile: !!fileName && isPathSaltpack(fileName),
     message,
     onDownload,

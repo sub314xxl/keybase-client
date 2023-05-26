@@ -1054,14 +1054,15 @@ export const createToggleInboxSearch = (payload: {readonly enabled: boolean}) =>
 export const createToggleMessageCollapse = (payload: {
   readonly conversationIDKey: Types.ConversationIDKey
   readonly messageID: Types.MessageID
+  readonly ordinal: Types.Ordinal
 }) => ({payload, type: toggleMessageCollapse as typeof toggleMessageCollapse})
 /**
  * Toggle the display of the thread search window
  */
-export const createToggleThreadSearch = (payload: {readonly conversationIDKey: Types.ConversationIDKey}) => ({
-  payload,
-  type: toggleThreadSearch as typeof toggleThreadSearch,
-})
+export const createToggleThreadSearch = (payload: {
+  readonly conversationIDKey: Types.ConversationIDKey
+  readonly hide?: boolean
+}) => ({payload, type: toggleThreadSearch as typeof toggleThreadSearch})
 /**
  * Unpin a message
  */
