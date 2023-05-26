@@ -36,7 +36,7 @@ jobs:
             REACT_NATIVE_MAX_WORKERS: 1
           command: yarn run react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/build/intermediates/assets/releaseUnsigned/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/releaseUnsigned
       - store_artifacts:
-          path: /android/app/build/intermediates/res/merged/releaseUnsigned
+          path: shared 
 
       # Build app.
       #
